@@ -1,3 +1,7 @@
+# 'private' helper method
+round_to_precision = (num, precision = 10) ->
+  Math.round(num * Math.pow(10,precision)) / Math.pow(10,precision)
+
 class AffineTransformation
   constructor: (@from, @to) ->
     if @from.length isnt @to.length || @from.length < 1
@@ -60,7 +64,24 @@ class AffineTransformation
         str += "x#{i} * #{@m[i][j + @dim + 1]}"
       str += "#{@m[@dim][j + @dim + 1]}"
       res += str + "\n"
-      res
+    res
+
+  transformation_matrix: ->
+    res = []
+    for j in [0...@dim]
+      res[j] = []
+      for i in [0...@dim]
+        res[j].push(round_to_precision(@m[i][j + @dim + 1]))
+      res[j].push(round_to_precision(@m[@dim][j + @dim + 1]))
+    res
+
+  to_svg_transform: ->
+    res = []
+    for i in [0..@dim]
+      for j in [0...@dim]
+        res.push(@transformation_matrix()[j][i])
+
+    "matrix(#{res.join(', ')})"
 
   transform: (pt) ->
     res = (0.0 for a in [0...@dim])
