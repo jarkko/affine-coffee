@@ -7,7 +7,7 @@ This can be used to e.g. position a bitmap map over another (like [here](http://
 
 ### Usage
 
-#### Example: simple translation (horizontal movement of +3)
+#### Example 1: simple translation (horizontal movement of +3)
 
 ```coffeescript
 coffee> require "./affine_transformation"
@@ -19,6 +19,20 @@ coffee> tr.transform([-1.5, 1.5])
 ```
 
 Yeah, gotta add rounding there...
+
+#### Example 2: rotate + scale
+
+```coffeescript
+coffee> from = [[-2, 2], [-1, 2], [-2, 1], [-1, 1]]
+coffee> to = [[1, -1], [-1, -1], [1, 1], [-1, 1]]
+coffee> tr = new AffineTransformation(from, to)
+coffee> tr.to_svg_transform()
+'matrix(-2, 0, 0, -2, -3, 3)'
+coffee> tr.transformation_matrix()
+[ [ -2, 0, -3 ], [ 0, -2, 3 ] ]
+```
+
+Note how `to_svg_transform()` returns a string that you can drop straight into the [transform attribute](http://www.w3.org/TR/SVG/coords.html#TransformAttribute) of an SVG element.
 
 ### License
 
