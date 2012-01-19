@@ -15,10 +15,14 @@ coffee> from = [[-2, 2], [-1, 2], [-2, 1], [-1, 1]]
 coffee> to = [[1, 2], [2, 2], [1, 1], [2, 1]]
 coffee> tr = new AffineTransformation(from, to)
 coffee> tr.transform([-1.5, 1.5])
-[ 1.4999999999999996, 1.5000000000000002 ]
+[ 1.5, 1.5 ]
+coffee> tr.inversely_transform([1.5, 1.5])
+[ -1.5, 1.5 ]
 ```
 
-Yeah, gotta add rounding there...
+As you can see, the same transformation can also be used inversely. This
+is useful when you need to find the original position of a point if
+there is already an existing transformation.
 
 #### Example 2: rotate + scale
 
