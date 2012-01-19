@@ -2,15 +2,6 @@ require '../vendor/sylvester/sylvester.src'
 require '../affine_transformation'
 
 describe 'New AffineTransformation', ->
-  beforeEach ->
-    @addMatchers {
-      toNearlyEqual: (expected, precision = 10) ->
-        actual = ((Math.round(i * Math.pow(10,precision)) / Math.pow(10,precision)) for i in this.actual)
-        return false if actual.length isnt expected.length
-        for num, i in actual
-          return false if parseFloat(num) isnt parseFloat(expected[i])
-        true
-    }
   describe 'when from and to are of different size', ->
     beforeEach ->
       @from = [[1,1], [2,2], [3,3]]
@@ -42,11 +33,11 @@ describe 'New AffineTransformation', ->
 
     describe 'transform', ->
       it 'should successfully translate points', ->
-        expect(@tr.transform([-1.5, 1.5])).toNearlyEqual([1.5, 1.5])
+        expect(@tr.transform([-1.5, 1.5])).toEqual([1.5, 1.5])
 
     describe 'inversely transform', ->
       it 'should successfully translate back to original points', ->
-        expect(@tr.inversely_transform([1.5, 1.5])).toNearlyEqual([-1.5, 1.5])
+        expect(@tr.inversely_transform([1.5, 1.5])).toEqual([-1.5, 1.5])
 
     describe 'transformation_matrix', ->
       it 'should return the correct matrix', ->
@@ -68,7 +59,7 @@ describe 'New AffineTransformation', ->
 
     describe 'inversely transform', ->
       it 'should successfully translate back to original points', ->
-        expect(@tr.inversely_transform([-0.5, 0.5])).toNearlyEqual([-1.5, 1.5])
+        expect(@tr.inversely_transform([-0.5, 0.5])).toEqual([-1.5, 1.5])
 
   describe 'simple rotation + scaling', ->
     beforeEach ->
@@ -78,8 +69,8 @@ describe 'New AffineTransformation', ->
 
     describe 'transform', ->
       it 'should successfully translate points', ->
-        expect(@tr.transform([-1.5, 1.5])).toNearlyEqual([0.0, 0.0])
+        expect(@tr.transform([-1.5, 1.5])).toEqual([0.0, 0.0])
 
     describe 'inversely transform', ->
       it 'should successfully translate back to original points', ->
-        expect(@tr.inversely_transform([0, 0])).toNearlyEqual([-1.5, 1.5])
+        expect(@tr.inversely_transform([0, 0])).toEqual([-1.5, 1.5])
