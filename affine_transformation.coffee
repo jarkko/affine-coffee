@@ -1,3 +1,5 @@
+require './vendor/sylvester/sylvester.src'
+
 # 'private' helper method
 round_to_precision = (num, precision = 10) ->
   Math.round(num * Math.pow(10,precision)) / Math.pow(10,precision)
@@ -75,6 +77,14 @@ class AffineTransformation
       res[j].push(round_to_precision(@m[@dim][j + @dim + 1]))
     res
 
+  transformation_matrix_m: ->
+    $M(@transformation_matrix())
+
+  inverse_transformation_matrix: ->
+    arr = (el for el in @transformation_matrix_m().elements)
+    arr.push([0, 0, 1])
+    $M(arr).inverse()
+
   to_svg_transform: ->
     res = []
     for i in [0..@dim]
@@ -84,11 +94,15 @@ class AffineTransformation
     "matrix(#{res.join(', ')})"
 
   transform: (pt) ->
-    res = (0.0 for a in [0...@dim])
-    for j in [0...@dim]
-      for i in [0...@dim]
-        res[j] += pt[i] * @m[i][j + @dim + 1]
-      res[j] += @m[@dim][j + @dim + 1]
-    res
+    @_transform_with_matrix(pt, @transformation_matrix_m())
+
+  inversely_transform: (pt) ->
+    @_transform_with_matrix(pt, @inverse_transformation_matrix())
+
+  _transform_with_matrix: (pt, matrix) ->
+    pt.push(1)
+    orig = $M([i] for i in pt)
+    res = matrix.x(orig)
+    (i[0] for i in res.elements)[0..1]
 
 (global ? window).AffineTransformation = AffineTransformation
