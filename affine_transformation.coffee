@@ -6,6 +6,8 @@ round_to_precision = (num, precision = 10) ->
 
 class AffineTransformation
   constructor: (@from, @to) ->
+    @dim = 2
+
     if @from.length isnt @to.length
       throw 'Both from and to must be of same size'
 

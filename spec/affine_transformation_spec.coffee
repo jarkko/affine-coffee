@@ -18,8 +18,13 @@ describe 'New AffineTransformation', ->
       @from = @to = []
       @tr = new AffineTransformation(@from, @to)
 
-    it 'should return a no-op matrix', ->
-      expect(@tr.transformation_matrix()).toEqual([[1,0,0], [0,1,0]])
+    describe 'transformation_matrix', ->
+      it 'should return a no-op matrix', ->
+        expect(@tr.transformation_matrix()).toEqual([[1,0,0], [0,1,0]])
+
+    describe 'to_svg_transform', ->
+      it 'should return correct transformation string', ->
+        expect(@tr.to_svg_transform()).toEqual('matrix(1, 0, 0, 1, 0, 0)')
 
     describe 'transform', ->
       it 'should successfully translate points to themselves', ->
@@ -43,8 +48,13 @@ describe 'New AffineTransformation', ->
       @to = [[3,5]]
       @tr = new AffineTransformation(@from, @to)
 
-    it 'should return a simple translating matrix', ->
-      expect(@tr.transformation_matrix()).toEqual([[1,0,2], [0,1,3]])
+    describe 'transformation_matrix', ->
+      it 'should return a simple translating matrix', ->
+        expect(@tr.transformation_matrix()).toEqual([[1,0,2], [0,1,3]])
+
+    describe 'to_svg_transform', ->
+      it 'should return correct transformation string', ->
+        expect(@tr.to_svg_transform()).toEqual('matrix(1, 0, 0, 1, 2, 3)')
 
     describe 'transform', ->
       it 'should successfully translate points', ->
@@ -106,6 +116,10 @@ describe 'New AffineTransformation', ->
       it 'should successfully transform back to original points', ->
         expect(@tr.inversely_transform([-0.5, 0.5])).toEqual([-1.5, 1.5])
 
+    describe 'to_svg_transform', ->
+      it 'should return correct svg transform string', ->
+        expect(@tr.to_svg_transform()).toEqual('matrix(-1, 0, 0, -1, -2, 2)')
+
   describe 'simple rotation + scaling', ->
     beforeEach ->
       @from = [[-2, 2], [-1, 2], [-2, 1], [-1, 1]]
@@ -119,3 +133,7 @@ describe 'New AffineTransformation', ->
     describe 'inversely transform', ->
       it 'should successfully transform back to original points', ->
         expect(@tr.inversely_transform([0, 0])).toEqual([-1.5, 1.5])
+
+    describe 'to_svg_transform', ->
+      it 'should return correct svg transform string', ->
+        expect(@tr.to_svg_transform()).toEqual('matrix(-2, 0, 0, -2, -3, 3)')
