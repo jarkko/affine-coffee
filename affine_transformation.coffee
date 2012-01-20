@@ -117,6 +117,7 @@ class AffineTransformation
     @_transform_with_matrix(pt, @inverse_transformation_matrix())
 
   _transform_with_matrix: (pt, matrix) ->
+    pt = pt.slice(0,2)
     pt.push(1)
     orig = $M([i] for i in pt)
     res = matrix.x(orig)

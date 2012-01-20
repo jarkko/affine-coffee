@@ -2,6 +2,9 @@ require '../vendor/sylvester/sylvester.src'
 require '../affine_transformation'
 
 describe 'New AffineTransformation', ->
+  beforeEach ->
+      @orig = [1.5, 1.5]
+
   describe 'when from and to are of different size', ->
     beforeEach ->
       @from = [[1,1], [2,2], [3,3]]
@@ -22,9 +25,17 @@ describe 'New AffineTransformation', ->
       it 'should successfully translate points to themselves', ->
         expect(@tr.transform([1.5, 1.5])).toEqual([1.5, 1.5])
 
+      it 'should not alter the original position', ->
+        @tr.transform(@orig)
+        expect(@orig).toEqual [1.5, 1.5]
+
     describe 'inversely transform', ->
       it 'should successfully translate back to original points', ->
         expect(@tr.inversely_transform([1.5, 1.5])).toEqual([1.5, 1.5])
+
+      it 'should not alter the original position', ->
+        @tr.inversely_transform(@orig)
+        expect(@orig).toEqual [1.5, 1.5]
 
   describe 'when there is only one correction', ->
     beforeEach ->
@@ -39,9 +50,17 @@ describe 'New AffineTransformation', ->
       it 'should successfully translate points', ->
         expect(@tr.transform([1.5, 1.5])).toEqual([3.5, 4.5])
 
+      it 'should not alter the original position', ->
+        @tr.transform(@orig)
+        expect(@orig).toEqual [1.5, 1.5]
+
     describe 'inversely transform', ->
       it 'should successfully translate back to original points', ->
         expect(@tr.inversely_transform([2.5, 1.5])).toEqual([0.5, -1.5])
+
+      it 'should not alter the original position', ->
+        @tr.inversely_transform(@orig)
+        expect(@orig).toEqual [1.5, 1.5]
 
   describe 'simple translation (movement)', ->
     beforeEach ->
@@ -53,9 +72,17 @@ describe 'New AffineTransformation', ->
       it 'should successfully translate points', ->
         expect(@tr.transform([-1.5, 1.5])).toEqual([1.5, 1.5])
 
+      it 'should not alter the original position', ->
+        @tr.transform(@orig)
+        expect(@orig).toEqual [1.5, 1.5]
+
     describe 'inversely transform', ->
       it 'should successfully translate back to original points', ->
         expect(@tr.inversely_transform([1.5, 1.5])).toEqual([-1.5, 1.5])
+
+      it 'should not alter the original position', ->
+        @tr.inversely_transform(@orig)
+        expect(@orig).toEqual [1.5, 1.5]
 
     describe 'transformation_matrix', ->
       it 'should return the correct matrix', ->
