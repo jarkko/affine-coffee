@@ -6,8 +6,16 @@ round_to_precision = (num, precision = 10) ->
 
 class AffineTransformation
   constructor: (@from, @to) ->
-    if @from.length isnt @to.length || @from.length < 1
+    if @from.length isnt @to.length
       throw 'Both from and to must be of same size'
+
+    if @from.length is 0
+      @buildNoOpMatrix()
+      return
+
+    if @from.length is 1
+      @buildTranslationMatrix()
+      return
 
     if @to.length < (@dim = @to[0].length)
       throw 'Too few points => under-determined system'
@@ -69,13 +77,22 @@ class AffineTransformation
     res
 
   transformation_matrix: ->
-    res = []
+    return @matrix if @matrix
+
+    @matrix = []
     for j in [0...@dim]
-      res[j] = []
+      @matrix[j] = []
       for i in [0...@dim]
-        res[j].push(round_to_precision(@m[i][j + @dim + 1]))
-      res[j].push(round_to_precision(@m[@dim][j + @dim + 1]))
-    res
+        @matrix[j].push(round_to_precision(@m[i][j + @dim + 1]))
+      @matrix[j].push(round_to_precision(@m[@dim][j + @dim + 1]))
+    @matrix
+
+  buildNoOpMatrix: ->
+    @matrix = [[1,0,0], [0,1,0]]
+
+  buildTranslationMatrix: ->
+    @matrix = [[1, 0, (@to[0][0] - @from[0][0])],
+               [0, 1, (@to[0][1] - @from[0][1])]]
 
   transformation_matrix_m: ->
     $M(@transformation_matrix())
