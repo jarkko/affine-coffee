@@ -3,7 +3,7 @@ require '../affine_transformation'
 
 describe 'New AffineTransformation', ->
   beforeEach ->
-      @orig = [1.5, 1.5]
+    @orig = [1.5, 1.5]
 
   describe 'when from and to are of different size', ->
     beforeEach ->
