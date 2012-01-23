@@ -19,27 +19,22 @@ class AffineTransformation
       @buildTranslationMatrix()
       return
 
+    if @from.length is 2
+      @addHelpPoint()
+
     if @to.length < (@dim = @to[0].length)
       throw 'Too few points => under-determined system'
 
-    c = ((0.0 for a in [0...@dim]) for i in [0..@dim])
-    for j in [0...@dim]
-      for k in [0..@dim]
-        for i in [0...(@from.length)]
-          qt = @from[i].concat [1]
-          c[k][j] += qt[k] * @to[i][j]
 
-    q = ((0.0 for a in [0...@dim]).concat([0]) for i in [0..@dim])
-    for qi in @from
-      qt = qi.concat [1]
-      for i in [0..@dim]
-        for j in [0..@dim]
-          q[i][j] += qt[i] * qt[j]
+    @buildHelpMatrices()
 
-    @m = (q[i].concat(c[i]) for i in [0..@dim])
     if !@gauss_jordan(@m)
-      throw "Singular matrix. Points are probably coplanar."
-
+      # singular matrix, so we assume points are coplanar
+      # try to add a help point and try again
+      @addHelpPoint()
+      @buildHelpMatrices()
+      if !@gauss_jordan(@m)
+        throw "sorry, can't help you"
 
   gauss_jordan: (m, eps = 1.0/Math.pow(10,10)) ->
     [h, w] = [m.length, m[0].length]
@@ -124,5 +119,31 @@ class AffineTransformation
     orig = $M([i] for i in pt)
     res = matrix.x(orig)
     (i[0] for i in res.elements)[0..1]
+
+  addHelpPoint: ->
+    help = []
+    help[0] = [(-1 * (@from[1][1] - @from[0][1]) + @from[0][1]),
+               (@from[1][0] - @from[0][0] + @from[0][0])]
+    help[1] = [(-1 * (@to[1][1] - @to[0][1]) + @to[0][1]),
+               (@to[1][0] - @to[0][0] + @to[0][0])]
+    @from.push(help[0])
+    @to.push(help[1])
+
+  buildHelpMatrices: ->
+    @c = ((0.0 for a in [0...@dim]) for i in [0..@dim])
+    for j in [0...@dim]
+      for k in [0..@dim]
+        for point, i in @from
+          qt = point.concat [1]
+          @c[k][j] += qt[k] * @to[i][j]
+
+    @q = ((0.0 for a in [0..@dim]) for i in [0..@dim])
+    for qi in @from
+      qt = qi.concat [1]
+      for i in [0..@dim]
+        for j in [0..@dim]
+          @q[i][j] += qt[i] * qt[j]
+
+    @m = (@q[i].concat(@c[i]) for i in [0..@dim])
 
 (global ? window).AffineTransformation = AffineTransformation
